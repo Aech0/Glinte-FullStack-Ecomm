@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Hero from '@/components/Hero';
 import ProductCard from '@/components/ProductCard';
 import FilterSidebar, { DEFAULT_FILTERS, applyFilters, type Filters } from '@/components/FilterSidebar';
+import MobileFiltersDrawer from '@/components/MobileFiltersDrawer';
 import AboutCarousel from '@/components/AboutCarousel';
 import { api } from '@/lib/api';
 import type { Product } from '@/lib/types';
@@ -44,7 +45,7 @@ export default function HomePage() {
             <h2 className="font-display text-4xl md:text-5xl">All Glosses</h2>
           </div>
           <p className="text-ink-muted max-w-md">
-            Ten shades, one obsession. Filter by family or finish to find your match.
+            Ten shades, one obsession. Filter by shade family to find your match.
           </p>
         </div>
 
@@ -54,8 +55,21 @@ export default function HomePage() {
           </div>
         )}
 
+        {/* Mobile: drawer trigger sits ABOVE the grid so it doesn't push
+            products down by 40px of grid-gap. Hidden on lg+. */}
+        <div className="lg:hidden mb-6">
+          <MobileFiltersDrawer
+            products={products}
+            filters={filters}
+            onChange={setFilters}
+            resultCount={filtered.length}
+          />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-10">
-          <FilterSidebar products={products} filters={filters} onChange={setFilters} />
+          <div className="hidden lg:block">
+            <FilterSidebar products={products} filters={filters} onChange={setFilters} />
+          </div>
 
           <div>
             {loading ? (
