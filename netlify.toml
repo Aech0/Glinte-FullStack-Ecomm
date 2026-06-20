@@ -1,0 +1,14 @@
+# Netlify build configuration.
+# Lives at the repo root; the `base` setting tells Netlify the frontend lives
+# in /frontend.
+
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = ".next"
+
+# Explicitly enable the official Next.js plugin so Netlify wires up the
+# server functions / edge handlers needed for App Router SSR. Without this
+# plugin, Netlify serves .next as static files and every dynamic route 404s.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
