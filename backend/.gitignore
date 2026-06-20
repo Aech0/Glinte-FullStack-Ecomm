@@ -1,0 +1,9 @@
+node_modules/
+.env
+*.log
+data/*.tmp
+
+# Runtime data files — never commit. Only products.json (seed data) is tracked.
+data/users.json
+data/orders.json
+data/carts.json
