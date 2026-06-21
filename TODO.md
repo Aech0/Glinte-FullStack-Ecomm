@@ -8,20 +8,7 @@ _Last updated: 2026-06-20 — end of session._
 
 ## 🔴 Next session — pick up here
 
-- [ ] **Shiprocket end-to-end test** (highest priority)
-  - All 3 env vars are now in Railway: `SHIPROCKET_EMAIL` (Vansh's email — kept intentionally as sole dev), `SHIPROCKET_PASSWORD`, `SHIPROCKET_PICKUP_LOCATION=Home`
-  - Current state of pickup addresses (as of end-of-session):
-    - **Home** (Rewa, MP, 486001) — marked PRIMARY, VERIFIED, can't be toggled off (primary status locks it). **This is the active one going forward.**
-    - **Home-1** (Andheri, Mumbai) — owner manually toggled OFF, no longer in play
-  - **Important context from owner:** she has been dispatching Instagram orders from the Rewa address for ~6 months via Shiprocket. So fulfilment from that pincode IS proven to work in some flow — likely either manual booking through Shiprocket dashboard, or Drop-at-Hub model, NOT necessarily via API courier-pickup.
-  - The unknown we need to resolve: when our backend calls `POST /v1/external/orders/create/adhoc` with `pickup_location=Home`, can Shiprocket auto-assign a courier? Or will it 4xx with "no courier available"?
-    - Step 1: place a real test order on `glintelipglaze.netlify.app`, paying with `4111 1111 1111 1111`
-    - Step 2: tail Railway logs while the order is placed; capture exact Shiprocket response
-    - Step 3a — **If `fulfilment_initiated`** (Railway logs show shipment ID): we're done. Smoke test passes.
-    - Step 3b — **If `fulfilment_pending`** (Railway logs show `Shiprocket create failed: …`): inspect the error message. Likely fixes:
-      - "Wrong Pickup location" → check exact-match casing of nickname `Home`
-      - "No courier available" → owner needs to switch to Drop-at-Hub workflow in Shiprocket settings, and we may need to add `pickup_type: 'Self'` or similar to the create-order payload in `services/shiprocket.js`
-      - Other → paste the full error in chat next session, patch from there
+- [x] **Shiprocket end-to-end test** — ✅ Live. Test order `#3SA0ZMIU` (Silly Coco × 1, ₹598) completed with Razorpay payment + Shiprocket shipment auto-created from Rewa pickup. Pipeline is fully automated for every future order.
 
 - [ ] **Mobile hero text overlaps the brand wordmark in the background image**
   - On phones, the white "Glossier than glossy." copy sits on top of the large pink "glinte" wordmark watermarked into the photo, causing a visual collision

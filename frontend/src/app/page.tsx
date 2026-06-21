@@ -6,6 +6,7 @@ import ProductCard from '@/components/ProductCard';
 import FilterSidebar, { DEFAULT_FILTERS, applyFilters, type Filters } from '@/components/FilterSidebar';
 import MobileFiltersDrawer from '@/components/MobileFiltersDrawer';
 import AboutCarousel from '@/components/AboutCarousel';
+import ReviewsCarousel from '@/components/ReviewsCarousel';
 import { api } from '@/lib/api';
 import type { Product } from '@/lib/types';
 
@@ -95,6 +96,9 @@ export default function HomePage() {
 
       {/* About-us tile carousel — owner-supplied square graphics */}
       <AboutCarousel />
+
+      {/* Customer reviews — S3-hosted profile pics + owner-supplied copy */}
+      <ReviewsCarousel />
 
       {/* Brand story */}
       <section className="bg-cream border-t border-cherub-100">
