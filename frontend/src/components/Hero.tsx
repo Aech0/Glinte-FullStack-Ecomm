@@ -8,10 +8,11 @@ import Link from 'next/link';
 //        hero-mobile.jpg    (recommended  900 × 1300, vertical crop)
 //   2. Replace the two HERO_* constants below.
 //
-// Mobile-specific styling (only): adds a dark bottom gradient and shifts the
-// copy to the bottom third where the lipstick sits — much better contrast
-// against the model's face than dark text over skin tones. The `md:`
-// overrides restore the original light-text-on-pink desktop look.
+// Mobile-specific styling (only): copy is shrunk and tucked at the bottom so
+// the watermarked "glinte" wordmark in the middle of the photo reads as the
+// hero element (owner's brief). Only the bottom ~30% of the image is shaded
+// for text contrast; the rest stays clear so the wordmark shows through.
+// All `md:` overrides keep the desktop look pixel-identical to before.
 
 const HERO_DESKTOP =
   'https://elasticbeanstalk-ap-south-1-539247475467.s3.ap-south-1.amazonaws.com/resources/back/imgs/Landing%20Page%20Image/glinte%20%289%29.png';
@@ -30,20 +31,21 @@ export default function Hero() {
         />
       </picture>
 
-      {/* Mobile-only dark gradient overlay for text legibility. Hidden on md+. */}
+      {/* Mobile-only contrast gradient. Only the bottom ~30% darkens so the
+          watermarked wordmark in the middle of the photo stays prominent. */}
       <div
         aria-hidden
-        className="absolute inset-0 md:hidden bg-gradient-to-t from-black/70 via-black/30 to-transparent"
+        className="absolute inset-0 md:hidden bg-gradient-to-t from-black/60 via-transparent to-transparent"
       />
 
       <div
         className="absolute inset-0 flex flex-col items-center text-center px-6
-                   justify-end pb-12
+                   justify-end pb-6
                    md:justify-center md:pb-0
                    md:bg-gradient-to-b md:from-transparent md:via-transparent md:to-cherub-50/40"
       >
         <h1
-          className="font-display text-5xl md:text-7xl lg:text-8xl
+          className="font-display text-2xl md:text-7xl lg:text-8xl
                      text-cream md:text-ink-soft
                      drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]
                      md:drop-shadow-[0_2px_6px_rgba(255,255,255,0.4)]
@@ -53,16 +55,17 @@ export default function Hero() {
           Glossier than glossy.
         </h1>
         <p
-          className="mt-5 max-w-xl text-cream/90 md:text-ink-soft/85 md:text-lg animate-fade-up"
+          className="mt-2 md:mt-5 max-w-xl text-xs md:text-lg
+                     text-cream/90 md:text-ink-soft/85 animate-fade-up"
           style={{ animationDelay: '240ms' }}
         >
           Ten high-shine shades. Zero stickiness. All you.
         </p>
         <Link
           href="#shop"
-          className="mt-8 inline-flex items-center gap-2
+          className="mt-4 md:mt-8 inline-flex items-center gap-2
                      bg-cream text-ink md:bg-ink md:text-cream
-                     px-7 py-3 rounded-full text-sm tracking-wide
+                     px-5 md:px-7 py-2 md:py-3 rounded-full text-xs md:text-sm tracking-wide
                      hover:bg-white md:hover:bg-cherub-700 transition animate-fade-up"
           style={{ animationDelay: '360ms' }}
         >
