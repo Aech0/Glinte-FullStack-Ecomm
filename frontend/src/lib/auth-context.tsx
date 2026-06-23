@@ -37,10 +37,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
+    // ORDER MATTERS:
+    //   1. setToken so the next request has the JWT in Authorization header
+    //   2. merge anon cart into user cart server-side
+    //   3. setUser last — this triggers cart-context's effect to refetch
+    //      /api/cart, which by now has the merged items. If we setUser
+    //      before merging, the refetch races the merge and lands on the
+    //      pre-merge user cart.
     setToken(data.token);
-    setUser(data.user);
-    // Merge any anonymous-cookie cart we built up before signing in.
     await api('/api/cart/merge', { method: 'POST' }).catch(() => {});
+    setUser(data.user);
   }, []);
 
   const register = useCallback(async (name: string, email: string, password: string) => {
@@ -49,8 +55,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       body: JSON.stringify({ name, email, password }),
     });
     setToken(data.token);
-    setUser(data.user);
     await api('/api/cart/merge', { method: 'POST' }).catch(() => {});
+    setUser(data.user);
   }, []);
 
   const logout = useCallback(() => {
