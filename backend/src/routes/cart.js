@@ -9,6 +9,25 @@ const ANON_COOKIE = 'glinte_cart_id';
 // cookie that keys their cart in carts.json; logged-in shoppers key on userId.
 // Logging in merges the anon cart into the user cart, then clears the cookie.
 
+// Cookie attributes need to differ between local dev and production:
+//   • Local (http://localhost:3000 → http://localhost:4000) — same-site-ish
+//     because the eTLD+1 is "localhost"; sameSite=lax works, secure must be
+//     off (browsers reject secure cookies over plain http).
+//   • Production (https://glinte.in → https://*.railway.app) — cross-site,
+//     so sameSite=lax silently drops the cookie. Need sameSite=none + secure.
+// `req.secure` reflects HTTPS at the edge thanks to `app.set('trust proxy', 1)`
+// in server.js, so we use it as the switch.
+function cookieOptions(req) {
+  const isSecure = !!req.secure;
+  return {
+    httpOnly: true,
+    sameSite: isSecure ? 'none' : 'lax',
+    secure: isSecure,
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    path: '/',
+  };
+}
+
 function cartKey(req) {
   if (req.user) return `user:${req.user.id}`;
   const anonId = req.cookies?.[ANON_COOKIE];
@@ -20,12 +39,7 @@ function ensureAnonCookie(req, res) {
   let anonId = req.cookies?.[ANON_COOKIE];
   if (!anonId) {
     anonId = genId('anon');
-    res.cookie(ANON_COOKIE, anonId, {
-      httpOnly: true,
-      sameSite: 'lax',
-      // 30 days. Don't set `secure: true` in dev — that would block over http.
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie(ANON_COOKIE, anonId, cookieOptions(req));
   }
   return `anon:${anonId}`;
 }
@@ -162,8 +176,11 @@ router.post('/merge', requireAuth, async (req, res) => {
   delete carts[anonKey];
   await db.saveCarts(carts);
 
-  // Clear the anon cookie so future requests use the user key.
-  res.clearCookie(ANON_COOKIE);
+  // Clear the anon cookie so future requests use the user key. Pass the same
+  // attributes we set it with — browsers require an exact match to clear a
+  // cookie with non-default SameSite/Secure attributes.
+  const opts = cookieOptions(req);
+  res.clearCookie(ANON_COOKIE, { ...opts, maxAge: undefined });
   res.json(await hydrate(carts[userKey]));
 });
 
